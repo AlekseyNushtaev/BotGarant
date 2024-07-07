@@ -22,6 +22,8 @@ class FSMFillForm(StatesGroup):
     fill_phone = State()
     fill_email = State()
     change = State()
+    fill_id = State()
+    fill_ans = State()
 
 @router.message(CommandStart(), StateFilter(default_state))
 async def process_start(msg: Message):
@@ -44,6 +46,10 @@ async def process_quest_forward(msg: Message, state: FSMContext):
     for admin_id in ADMIN_IDS:
         try:
             await bot.forward_message(chat_id=admin_id, from_chat_id=msg.chat.id, message_id=msg.message_id)
+            await bot.send_message(chat_id=admin_id,
+                                   text=f'{msg.from_user.username}\n{msg.from_user.id}',
+                                   reply_markup=create_kb(1,
+                                                          ans="Написать ответ через бота"))
         except Exception:
             pass
     await msg.answer(text='Ваш вопрос принят. В скором времени мы с удовольствием ответим на него, согласно нашему рабочему графику. Спасибо за обращение!',
@@ -51,6 +57,31 @@ async def process_quest_forward(msg: Message, state: FSMContext):
                                             ticket="Получить гарантийный талон 📄",
                                             quest="Обратиться в службу поддержки ⁉️"))
     await state.set_state(default_state)
+
+
+@router.callback_query(F.data == "ans", StateFilter(default_state))
+async def process_id(cb: CallbackQuery, state: FSMContext):
+    await bot.send_message(cb.from_user.id, text="Введите id юзера")
+    await state.set_state(FSMFillForm.fill_id)
+
+
+@router.message(StateFilter(FSMFillForm.fill_id))
+async def process_ans(msg: Message, state: FSMContext):
+    await state.update_data(user_id=msg.text)
+    await msg.answer(text="Введите сообщение для юзера")
+    await state.set_state(FSMFillForm.fill_ans)
+
+
+@router.message(StateFilter(FSMFillForm.fill_ans))
+async def process_send_ans(msg: Message, state: FSMContext):
+    dct = await state.get_data()
+    try:
+        await bot.send_message(chat_id=dct['user_id'], text=msg.text)
+        await msg.answer(text="Сообщение отправлено")
+        await state.set_state(default_state)
+    except Exception:
+        await msg.answer(text="Что-то пошло не так")
+        await state.set_state(default_state)
 
 
 @router.callback_query(F.data == "ticket", StateFilter(default_state))
