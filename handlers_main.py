@@ -47,7 +47,8 @@ async def process_quest_forward(msg: Message, state: FSMContext):
         try:
             await bot.forward_message(chat_id=admin_id, from_chat_id=msg.chat.id, message_id=msg.message_id)
             await bot.send_message(chat_id=admin_id,
-                                   text=f'{msg.from_user.username}\n{msg.from_user.id}',
+                                   text=f'username - {msg.from_user.username}\n'
+                                        f'id -       {msg.from_user.id}',
                                    reply_markup=create_kb(1,
                                                           ans="Написать ответ через бота"))
         except Exception:
