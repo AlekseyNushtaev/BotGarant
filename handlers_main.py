@@ -91,21 +91,25 @@ async def process_ticket(cb: CallbackQuery, state: FSMContext):
                            text="Выберите пожалуйста наименование Товара.",
                            reply_markup=create_kb(1,
                                                   p_1="GoPro hero 12",
-                                                  p_2="Meta Quest 3 128GB",
-                                                  p_3="Google Pixel 8A 128GB",
-                                                  p_4="SSD Samsung 990 Pro 1TB",
-                                                  p_5="SSD Samsung 990 Pro 2TB"))
+                                                  p_2="GoPro hero 13",
+                                                  p_3="Meta Quest 3 128GB",
+                                                  p_4="Google Pixel 8A 128GB",
+                                                  p_5="SSD Samsung 990 Pro 1TB",
+                                                  p_6="SSD Samsung 990 Pro 2TB",
+                                                  p_7="Google Pixel 9 Pro XL"))
     await state.set_state(FSMFillForm.fill_product)
 
 
-@router.callback_query(F.data.in_({'p_1', 'p_2', 'p_3', 'p_4', 'p_5'}), StateFilter(FSMFillForm.fill_product))
+@router.callback_query(F.data.in_({'p_1', 'p_2', 'p_3', 'p_4', 'p_5', 'p_6', 'p_7'}), StateFilter(FSMFillForm.fill_product))
 async def process_product(cb: CallbackQuery, state: FSMContext):
     dct = {
         'p_1': "GoPro hero 12",
-        'p_2': "Meta Quest 3 128GB",
-        'p_3': "Google Pixel 8A 128GB",
-        'p_4': "SSD Samsung 990 Pro 1TB",
-        'p_5': "SSD Samsung 990 Pro 2TB"
+        'p_2': "GoPro hero 13",
+        'p_3': "Meta Quest 3 128GB",
+        'p_4': "Google Pixel 8A 128GB",
+        'p_5': "SSD Samsung 990 Pro 1TB",
+        'p_6': "SSD Samsung 990 Pro 2TB",
+        'p_7': "Google Pixel 9 Pro XL"
     }
     await state.update_data(product=dct[cb.data])
     await bot.send_message(chat_id=cb.from_user.id,
