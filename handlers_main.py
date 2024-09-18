@@ -25,6 +25,7 @@ class FSMFillForm(StatesGroup):
     fill_id = State()
     fill_ans = State()
 
+
 @router.message(CommandStart(), StateFilter(default_state))
 async def process_start(msg: Message):
     await msg.answer_photo(
@@ -33,7 +34,6 @@ async def process_start(msg: Message):
         reply_markup=create_kb(1,
                                ticket="Получить гарантийный талон 📄",
                                quest="Обратиться в службу поддержки ⁉️"))
-
 
 @router.callback_query(F.data == "quest", StateFilter(default_state))
 async def process_quest(cb: CallbackQuery, state: FSMContext):
@@ -176,7 +176,7 @@ async def process_doc(msg: Message, state: FSMContext):
     doc.save(f"Гарантийные обязательства-{msg.from_user.id}.docx")
     document = FSInputFile(f"Гарантийные обязательства-{msg.from_user.id}.docx")
     await msg.answer_document(document=document,
-                              caption="Спасибо за регистрацию продукта, ознакомьтесь с содержимым, после прочтения нажмите кнопку Согласен и мы вам пришлем заполненый талон на вашу почту.",
+                              caption="Спасибо за регистрацию продукта, ознакомьтесь с содержимым, после прочтения нажмите кнопку Согласен и после этого можно скачать гарантийное соглашение.",
                               reply_markup=create_kb(1,
                                                      yes="Согласен",
                                                      no="Не согласен"))
@@ -187,7 +187,7 @@ async def process_doc(msg: Message, state: FSMContext):
 async def process_restart(cb: CallbackQuery, state: FSMContext):
     if cb.data == 'yes':
         await bot.send_message(chat_id=cb.from_user.id,
-                         text='В ближайшее время мы направим на Вашу электронную почту гарантийное соглашение')
+                         text='Теперь Вы можете скачать гарантийное соглашение')
         for admin_id in ADMIN_IDS:
             try:
                 await bot.send_document(admin_id, FSInputFile(f"Гарантийные обязательства-{cb.from_user.id}.docx"),
