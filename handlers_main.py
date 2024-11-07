@@ -29,7 +29,7 @@ class FSMFillForm(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def process_start(msg: Message):
     await msg.answer_photo(
-        photo=FSInputFile('start.jpg'),#"AgACAgIAAxkBAAMJZnpRPdVAQ-hkT0qHh5278vxn0BwAAnvYMRux7dBLxdHZbINnCHYBAAMCAANzAAM1BA",
+        photo="AgACAgIAAxkBAAMJZnpRPdVAQ-hkT0qHh5278vxn0BwAAnvYMRux7dBLxdHZbINnCHYBAAMCAANzAAM1BA",
         caption='Добро пожаловать в магазин Shikimori 😽',
         reply_markup=create_kb(1,
                                ticket="Получить гарантийный талон 📄",
