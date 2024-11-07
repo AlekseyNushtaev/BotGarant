@@ -29,7 +29,7 @@ class FSMFillForm(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def process_start(msg: Message):
     await msg.answer_photo(
-        photo="AgACAgIAAxkBAAMJZnpRPdVAQ-hkT0qHh5278vxn0BwAAnvYMRux7dBLxdHZbINnCHYBAAMCAANzAAM1BA",
+        photo=FSInputFile('start.jpg'),#"AgACAgIAAxkBAAMJZnpRPdVAQ-hkT0qHh5278vxn0BwAAnvYMRux7dBLxdHZbINnCHYBAAMCAANzAAM1BA",
         caption='Добро пожаловать в магазин Shikimori 😽',
         reply_markup=create_kb(1,
                                ticket="Получить гарантийный талон 📄",
@@ -90,26 +90,32 @@ async def process_ticket(cb: CallbackQuery, state: FSMContext):
     await bot.send_message(chat_id=cb.from_user.id,
                            text="Выберите пожалуйста наименование Товара.",
                            reply_markup=create_kb(1,
-                                                  p_1="GoPro hero 12",
-                                                  p_2="GoPro hero 13",
-                                                  p_3="Meta Quest 3 128GB",
-                                                  p_4="Google Pixel 8A 128GB",
-                                                  p_5="SSD Samsung 990 Pro 1TB",
-                                                  p_6="SSD Samsung 990 Pro 2TB",
-                                                  p_7="Google Pixel 9 Pro XL"))
+                                                  p_1="Google Pixel 9 Pro XL",
+                                                  p_2="GoPro Hero",
+                                                  p_3="GoPro Hero 12",
+                                                  p_4="GoPro Hero 13",
+                                                  p_5="GoPro 10",
+                                                  p_6="Google Pixel 8A 128GB",
+                                                  p_7="Meta Quest 3 128GB",
+                                                  p_8='OnePlus 12',
+                                                  p_9="SSD Samsung 990 Pro 1TB",
+                                                  p_10="SSD Samsung 990 Pro 2TB"))
     await state.set_state(FSMFillForm.fill_product)
 
 
-@router.callback_query(F.data.in_({'p_1', 'p_2', 'p_3', 'p_4', 'p_5', 'p_6', 'p_7'}), StateFilter(FSMFillForm.fill_product))
+@router.callback_query(F.data.in_({'p_1', 'p_2', 'p_3', 'p_4', 'p_5', 'p_6', 'p_7', 'p_8', 'p_9', 'p_10'}), StateFilter(FSMFillForm.fill_product))
 async def process_product(cb: CallbackQuery, state: FSMContext):
     dct = {
-        'p_1': "GoPro hero 12",
-        'p_2': "GoPro hero 13",
-        'p_3': "Meta Quest 3 128GB",
-        'p_4': "Google Pixel 8A 128GB",
-        'p_5': "SSD Samsung 990 Pro 1TB",
-        'p_6': "SSD Samsung 990 Pro 2TB",
-        'p_7': "Google Pixel 9 Pro XL"
+        'p_1': "Google Pixel 9 Pro XL",
+        'p_2': "GoPro Hero",
+        'p_3': "GoPro Hero 12",
+        'p_4': "GoPro Hero 13",
+        'p_5': "GoPro 10",
+        'p_6': "Google Pixel 8A 128GB",
+        'p_7': "Meta Quest 3 128GB",
+        'p_8': "OnePlus 12",
+        'p_9': "SSD Samsung 990 Pro 1TB",
+        'p_10': "SSD Samsung 990 Pro 2TB",
     }
     await state.update_data(product=dct[cb.data])
     await bot.send_message(chat_id=cb.from_user.id,
